@@ -254,11 +254,11 @@ public class GithubGraphQLService {
           NoSuchAlgorithmException,
           InvalidKeySpecException,
           NoLinkedOrganizationException {
-<span class="nc" id="L257">    log.info(&quot;getDefaultBasePermission called with course.getId(): {}&quot;, course.getId());</span>
-<span class="nc" id="L258">    String githubToken = jwtService.getInstallationToken(course);</span>
+<span class="fc" id="L257">    log.info(&quot;getDefaultBasePermission called with course.getId(): {}&quot;, course.getId());</span>
+<span class="fc" id="L258">    String githubToken = jwtService.getInstallationToken(course);</span>
 
     // language=GraphQL
-<span class="nc" id="L261">    String query =</span>
+<span class="fc" id="L261">    String query =</span>
         &quot;&quot;&quot;
         query GetOrgDefaultPermission($login: String!) {
           organization(login: $login) {
@@ -268,15 +268,15 @@ public class GithubGraphQLService {
         }
         &quot;&quot;&quot;;
 
-<span class="nc" id="L271">    return graphQlClient</span>
-<span class="nc" id="L272">        .mutate()</span>
-<span class="nc" id="L273">        .header(&quot;Authorization&quot;, &quot;Bearer &quot; + githubToken)</span>
-<span class="nc" id="L274">        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)</span>
-<span class="nc" id="L275">        .build()</span>
-<span class="nc" id="L276">        .document(query)</span>
-<span class="nc" id="L277">        .variable(&quot;login&quot;, course.getInstallationId())</span>
-<span class="nc" id="L278">        .retrieveSync(&quot;repository.defaultRepositoryPermission&quot;)</span>
-<span class="nc" id="L279">        .toEntity(String.class);</span>
+<span class="fc" id="L271">    return graphQlClient</span>
+<span class="fc" id="L272">        .mutate()</span>
+<span class="fc" id="L273">        .header(&quot;Authorization&quot;, &quot;Bearer &quot; + githubToken)</span>
+<span class="fc" id="L274">        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)</span>
+<span class="fc" id="L275">        .build()</span>
+<span class="fc" id="L276">        .document(query)</span>
+<span class="fc" id="L277">        .variable(&quot;login&quot;, course.getInstallationId())</span>
+<span class="fc" id="L278">        .retrieveSync(&quot;organization.defaultRepositoryPermission&quot;)</span>
+<span class="fc" id="L279">        .toEntity(String.class);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

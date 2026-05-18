@@ -27,7 +27,7 @@ frontiers,edu.ucsb.cs156.frontiers.services,CanvasService,0,203,0,0,0,72,0,8,0,8
 frontiers,edu.ucsb.cs156.frontiers.services,OrganizationMemberService.new TypeReference() {...},0,3,0,0,0,1,0,1,0,1
 frontiers,edu.ucsb.cs156.frontiers.services,OrganizationMemberService.new TypeReference() {...},0,3,0,0,0,1,0,1,0,1
 frontiers,edu.ucsb.cs156.frontiers.services,UpdateUserService,0,139,0,12,0,36,0,13,0,7
-frontiers,edu.ucsb.cs156.frontiers.services,GithubGraphQLService,45,268,0,4,12,82,1,8,1,6
+frontiers,edu.ucsb.cs156.frontiers.services,GithubGraphQLService,0,313,0,4,0,94,0,9,0,7
 frontiers,edu.ucsb.cs156.frontiers.services,SystemInfoServiceImpl,0,58,0,6,0,16,0,7,0,4
 frontiers,edu.ucsb.cs156.frontiers.services,SystemInfoService,0,3,0,0,0,1,0,1,0,1
 frontiers,edu.ucsb.cs156.frontiers.services,UserDataDTOService,0,81,0,2,0,16,0,5,0,4
@@ -62,7 +62,7 @@ frontiers,edu.ucsb.cs156.frontiers.controllers,TeamsController.TeamMemberStatus,
 frontiers,edu.ucsb.cs156.frontiers.controllers,RosterStudentsCSVController.RosterSourceType,0,33,0,0,0,6,0,1,0,1
 frontiers,edu.ucsb.cs156.frontiers.controllers,RosterStudentsController,0,636,0,78,0,164,0,61,0,22
 frontiers,edu.ucsb.cs156.frontiers.controllers,CSVDownloadsController,0,101,0,0,0,23,0,5,0,5
-frontiers,edu.ucsb.cs156.frontiers.controllers,GithubGraphQLController,39,140,0,0,9,24,2,6,2,6
+frontiers,edu.ucsb.cs156.frontiers.controllers,GithubGraphQLController,0,179,0,0,0,33,0,8,0,8
 frontiers,edu.ucsb.cs156.frontiers.controllers,RepositoryController,0,108,0,8,0,29,0,9,0,5
 frontiers,edu.ucsb.cs156.frontiers.controllers,CourseStaffController,0,307,0,36,0,83,0,30,0,12
 frontiers,edu.ucsb.cs156.frontiers.controllers,UsersController,0,8,0,0,0,2,0,2,0,2

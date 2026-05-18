@@ -121,22 +121,22 @@ public class GithubGraphQLController extends ApiController {
   @PreAuthorize(&quot;@CourseSecurity.hasManagePermissions(#root, #courseId)&quot;)
   @GetMapping(&quot;defaultBasePermission&quot;)
   public String getDefaultBasePermission(@Parameter Long courseId) throws Exception {
-<span class="nc" id="L124">    log.info(&quot;getDefaultBasePermission called with courseId: {}&quot;, courseId);</span>
+<span class="fc" id="L124">    log.info(&quot;getDefaultBasePermission called with courseId: {}&quot;, courseId);</span>
 
-<span class="nc" id="L126">    Course course =</span>
+<span class="fc" id="L126">    Course course =</span>
         courseRepository
-<span class="nc" id="L128">            .findById(courseId)</span>
-<span class="nc" id="L129">            .orElseThrow(() -&gt; new EntityNotFoundException(Course.class, courseId));</span>
+<span class="fc" id="L128">            .findById(courseId)</span>
+<span class="fc" id="L129">            .orElseThrow(() -&gt; new EntityNotFoundException(Course.class, courseId));</span>
 
-<span class="nc" id="L131">    log.info(&quot;Found course: {}&quot;, course);</span>
+<span class="fc" id="L131">    log.info(&quot;Found course: {}&quot;, course);</span>
 
-<span class="nc" id="L133">    log.info(&quot;Current user is authorized to access course: {}&quot;, course.getId());</span>
+<span class="fc" id="L133">    log.info(&quot;Current user is authorized to access course: {}&quot;, course.getId());</span>
 
-<span class="nc" id="L135">    String result = this.githubGraphQLService.getDefaultBasePermission(course);</span>
+<span class="fc" id="L135">    String result = this.githubGraphQLService.getDefaultBasePermission(course);</span>
 
-<span class="nc" id="L137">    log.info(&quot;Result from getDefaultBasePermission: {}&quot;, result);</span>
+<span class="fc" id="L137">    log.info(&quot;Result from getDefaultBasePermission: {}&quot;, result);</span>
 
-<span class="nc" id="L139">    return result;</span>
+<span class="fc" id="L139">    return result;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
