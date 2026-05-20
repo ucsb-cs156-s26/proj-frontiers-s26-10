@@ -274,7 +274,7 @@ public class GithubGraphQLService {
 <span class="fc" id="L274">        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)</span>
 <span class="fc" id="L275">        .build()</span>
 <span class="fc" id="L276">        .document(query)</span>
-<span class="fc" id="L277">        .variable(&quot;login&quot;, course.getInstallationId())</span>
+<span class="fc" id="L277">        .variable(&quot;login&quot;, course.getOrgName())</span>
 <span class="fc" id="L278">        .retrieveSync(&quot;organization.defaultRepositoryPermission&quot;)</span>
 <span class="fc" id="L279">        .toEntity(String.class);</span>
   }
