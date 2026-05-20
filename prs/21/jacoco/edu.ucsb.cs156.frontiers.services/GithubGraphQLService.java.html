@@ -242,41 +242,5 @@ public class GithubGraphQLService {
 <span class="fc bfc" id="L242" title="All 2 branches covered.">    } while (hasNextPage);</span>
 <span class="fc" id="L243">    downloadedCommitRepository.saveAll(downloadedCommits);</span>
 <span class="fc" id="L244">  }</span>
-
-  /**
-   * Retrieves the name of the default base permission for a given GitHub organization.
-   *
-   * @param course The course entity.
-   * @return A Mono emitting the default base permission, or an empty Mono if not found.
-   */
-  public String getDefaultBasePermission(Course course)
-      throws JsonProcessingException,
-          NoSuchAlgorithmException,
-          InvalidKeySpecException,
-          NoLinkedOrganizationException {
-<span class="fc" id="L257">    log.info(&quot;getDefaultBasePermission called with course.getId(): {}&quot;, course.getId());</span>
-<span class="fc" id="L258">    String githubToken = jwtService.getInstallationToken(course);</span>
-
-    // language=GraphQL
-<span class="fc" id="L261">    String query =</span>
-        &quot;&quot;&quot;
-        query GetOrgDefaultPermission($login: String!) {
-          organization(login: $login) {
-            name
-            defaultRepositoryPermission
-          }
-        }
-        &quot;&quot;&quot;;
-
-<span class="fc" id="L271">    return graphQlClient</span>
-<span class="fc" id="L272">        .mutate()</span>
-<span class="fc" id="L273">        .header(&quot;Authorization&quot;, &quot;Bearer &quot; + githubToken)</span>
-<span class="fc" id="L274">        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)</span>
-<span class="fc" id="L275">        .build()</span>
-<span class="fc" id="L276">        .document(query)</span>
-<span class="fc" id="L277">        .variable(&quot;login&quot;, course.getOrgName())</span>
-<span class="fc" id="L278">        .retrieveSync(&quot;organization.defaultRepositoryPermission&quot;)</span>
-<span class="fc" id="L279">        .toEntity(String.class);</span>
-  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
