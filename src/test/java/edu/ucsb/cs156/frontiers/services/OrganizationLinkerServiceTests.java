@@ -209,7 +209,7 @@ public class OrganizationLinkerServiceTests {
 
     CourseWarning warning = organizationLinkerService.checkCourseWarnings(course);
     assertFalse(warning.showOrganizationAgeWarning());
-    assertEquals(warning.defaultBasePermission(), false);
+    assertEquals(warning.showDefaultBasePermission(), false);
   }
 
   @Test
@@ -235,7 +235,7 @@ public class OrganizationLinkerServiceTests {
 
     CourseWarning warning = organizationLinkerService.checkCourseWarnings(course);
     assertTrue(warning.showOrganizationAgeWarning());
-    assertEquals(warning.defaultBasePermission(), false);
+    assertEquals(warning.showDefaultBasePermission(), false);
   }
 
   @Test
