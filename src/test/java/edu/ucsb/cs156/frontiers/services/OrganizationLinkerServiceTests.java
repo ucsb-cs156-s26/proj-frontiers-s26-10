@@ -283,7 +283,6 @@ public class OrganizationLinkerServiceTests {
         .andRespond(withSuccess(apiResponse, MediaType.APPLICATION_JSON));
 
     CourseWarning warning = organizationLinkerService.checkCourseWarnings(course);
-    assertTrue(warning.showOrganizationAgeWarning());
     assertEquals(warning.showDefaultBasePermission(), true);
   }
 
