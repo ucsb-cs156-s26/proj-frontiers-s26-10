@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for pages/Instructor/InstructorCourseShowPage.jsx</title>
+    <title>Code coverage report for pages/Staff/StaffCourseShowPage.jsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">pages/Instructor</a> InstructorCourseShowPage.jsx</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">pages/Staff</a> StaffCourseShowPage.jsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -230,15 +230,7 @@
 <a name='L165'></a><a href='#L165'>165</a>
 <a name='L166'></a><a href='#L166'>166</a>
 <a name='L167'></a><a href='#L167'>167</a>
-<a name='L168'></a><a href='#L168'>168</a>
-<a name='L169'></a><a href='#L169'>169</a>
-<a name='L170'></a><a href='#L170'>170</a>
-<a name='L171'></a><a href='#L171'>171</a>
-<a name='L172'></a><a href='#L172'>172</a>
-<a name='L173'></a><a href='#L173'>173</a>
-<a name='L174'></a><a href='#L174'>174</a>
-<a name='L175'></a><a href='#L175'>175</a>
-<a name='L176'></a><a href='#L176'>176</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L168'></a><a href='#L168'>168</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -256,17 +248,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -274,11 +260,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -290,8 +276,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -303,8 +289,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -417,7 +401,7 @@
 import { useBackend } from "main/utils/useBackend";
 &nbsp;
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useCurrentUser } from "main/utils/currentUser";
+import { useCurrentUser, hasRole } from "main/utils/currentUser";
 import { useNavigate, useParams } from "react-router";
 &nbsp;
 import Modal from "react-bootstrap/Modal";
@@ -428,20 +412,14 @@ import StaffTabComponent from "main/components/TabComponent/StaffTabComponent";
 import GithubSettingIcon from "main/components/Common/GithubSettingIcon";
 import TeamsTabComponent from "main/components/TabComponent/TeamsTabComponent";
 import { CourseWarningBanner } from "main/components/Courses/CourseWarningBanner";
-import SettingsTabComponent from "main/components/TabComponent/SettingsTabComponent";
 import JobTabComponent from "main/components/TabComponent/JobTabComponent";
 &nbsp;
-export default function InstructorCourseShowPage() {
+export default function StaffCourseShowPage() {
   const currentUser = useCurrentUser();
   const courseId = useParams().id;
   const [showErrorModal, setShowErrorModal] = useState(false);
 &nbsp;
-  const {
-    data: course,
-    error: _errorCourse,
-    status: _statusCourse,
-    failureCount: courseBackendFailureCount,
-  } = useBackend(
+  const { data: course, failureCount: courseBackendFailureCount } = useBackend(
     [`/api/courses/${courseId}`],
     // Stryker disable next-line StringLiteral : GET and empty string are equivalent
     { method: "GET", url: `/api/courses/${courseId}` },
@@ -465,7 +443,7 @@ export default function InstructorCourseShowPage() {
     }
   }, [getCourseFailed, navigate]);
 &nbsp;
-  const testId = "InstructorCourseShowPage";
+  const testId = "StaffCourseShowPage";
   return (
     &lt;BasicLayout&gt;
       &lt;Modal show={showErrorModal}&gt;
@@ -562,6 +540,7 @@ export default function InstructorCourseShowPage() {
             courseId={courseId}
             testIdPrefix={testId}
             currentUser={currentUser}
+            isInstructor={Boolean(hasRole(currentUser, "ROLE_INSTRUCTOR"))}
           /&gt;
         &lt;/Tab&gt;
         &lt;Tab eventKey={"teams"} title={"Teams"} className="pt-2"&gt;
@@ -580,9 +559,6 @@ export default function InstructorCourseShowPage() {
         &lt;/Tab&gt;
         &lt;Tab eventKey={"jobs"} title={"Jobs"} className="pt-2"&gt;
           &lt;JobTabComponent courseId={courseId} testIdPrefix={testId} /&gt;
-        &lt;/Tab&gt;
-        &lt;Tab eventKey={"settings"} title={"Settings"} className="pt-2"&gt;
-          &lt;SettingsTabComponent courseId={courseId} testIdPrefix={testId} /&gt;
         &lt;/Tab&gt;
       &lt;/Tabs&gt;
     &lt;/BasicLayout&gt;
