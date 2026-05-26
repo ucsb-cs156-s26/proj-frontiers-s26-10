@@ -46,9 +46,7 @@ describe("DownloadsTabComponent Tests", () => {
 
     render(<DownloadsTabComponent courseId={42} testIdPrefix={testId} />);
 
-    fireEvent.click(
-      screen.getByTestId(`${testId}-download-teams-csv-button`),
-    );
+    fireEvent.click(screen.getByTestId(`${testId}-download-teams-csv-button`));
 
     expect(openSpy).toHaveBeenCalledWith(
       "/api/csv/teams?courseId=42",
