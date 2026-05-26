@@ -107,23 +107,22 @@ public class DeleteRepoJob implements JobContextConsumer {
 
 <span class="fc bfc" id="L108" title="All 2 branches covered.">        if (hasCommits) {</span>
 <span class="fc" id="L109">          reposRetained++;</span>
-          // Deliberately keeping the &quot;not delete&quot; typo from your Acceptance Criteria screenshot
-<span class="fc" id="L111">          ctx.log(String.format(&quot;Repo %s not delete; commits exist.&quot;, repoName));</span>
+<span class="fc" id="L110">          ctx.log(String.format(&quot;Repo %s not delete; commits exist.&quot;, repoName));</span>
         } else {
-<span class="fc" id="L113">          String deleteUrl = &quot;https://api.github.com/repos/&quot; + orgName + &quot;/&quot; + repoName;</span>
-<span class="fc" id="L114">          restTemplate.exchange(deleteUrl, HttpMethod.DELETE, entity, String.class);</span>
-<span class="fc" id="L115">          reposDeleted++;</span>
+<span class="fc" id="L112">          String deleteUrl = &quot;https://api.github.com/repos/&quot; + orgName + &quot;/&quot; + repoName;</span>
+<span class="fc" id="L113">          restTemplate.exchange(deleteUrl, HttpMethod.DELETE, entity, String.class);</span>
+<span class="fc" id="L114">          reposDeleted++;</span>
         }
-<span class="fc" id="L117">      } catch (Exception e) {</span>
-<span class="fc" id="L118">        errors++;</span>
-<span class="fc" id="L119">        ctx.log(String.format(&quot;Error processing repo %s: %s&quot;, repoName, e.getMessage()));</span>
-<span class="fc" id="L120">      }</span>
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L116">      } catch (Exception e) {</span>
+<span class="fc" id="L117">        errors++;</span>
+<span class="fc" id="L118">        ctx.log(String.format(&quot;Error processing repo %s: %s&quot;, repoName, e.getMessage()));</span>
+<span class="fc" id="L119">      }</span>
+<span class="fc" id="L120">    }</span>
 
     // 3. Final Logging
-<span class="fc" id="L124">    ctx.log(String.format(&quot;%d repos deleted&quot;, reposDeleted));</span>
-<span class="fc" id="L125">    ctx.log(String.format(&quot;%d repos retained&quot;, reposRetained));</span>
-<span class="fc" id="L126">    ctx.log(String.format(&quot;%d errors&quot;, errors));</span>
-<span class="fc" id="L127">  }</span>
+<span class="fc" id="L123">    ctx.log(String.format(&quot;%d repos deleted&quot;, reposDeleted));</span>
+<span class="fc" id="L124">    ctx.log(String.format(&quot;%d repos retained&quot;, reposRetained));</span>
+<span class="fc" id="L125">    ctx.log(String.format(&quot;%d errors&quot;, errors));</span>
+<span class="fc" id="L126">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
