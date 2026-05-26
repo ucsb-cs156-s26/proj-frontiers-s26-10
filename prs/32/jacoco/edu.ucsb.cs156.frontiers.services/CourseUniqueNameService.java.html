@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CourseUniqueNameService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontiers</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.frontiers.services</a> &gt; <span class="el_source">CourseUniqueNameService.java</span></div><h1>CourseUniqueNameService.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.frontiers.services;
+
+import edu.ucsb.cs156.frontiers.entities.RosterStudent;
+import edu.ucsb.cs156.frontiers.repositories.RosterStudentRepository;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+<span class="fc" id="L14">public class CourseUniqueNameService {</span>
+
+  @Autowired private RosterStudentRepository rosterStudentRepository;
+
+  public HashMap&lt;Long, String&gt; getUniqueNames(Long courseId) {
+<span class="fc" id="L19">    List&lt;RosterStudent&gt; students =</span>
+<span class="fc" id="L20">        StreamSupport.stream(rosterStudentRepository.findByCourseId(courseId).spliterator(), false)</span>
+<span class="fc" id="L21">            .collect(Collectors.toList());</span>
+<span class="fc" id="L22">    return computeUniqueNames(students);</span>
+  }
+
+  public HashMap&lt;Long, String&gt; computeUniqueNames(List&lt;RosterStudent&gt; students) {
+<span class="fc" id="L26">    Map&lt;Long, String&gt; shortNames = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">    for (RosterStudent s : students) {</span>
+<span class="fc" id="L28">      String fn = s.getFirstName();</span>
+<span class="fc bfc" id="L29" title="All 4 branches covered.">      String shortName = (fn != null &amp;&amp; !fn.isBlank()) ? fn.strip().split(&quot;\\s+&quot;)[0] : &quot;&quot;;</span>
+<span class="fc" id="L30">      shortNames.put(s.getId(), shortName);</span>
+<span class="fc" id="L31">    }</span>
+
+<span class="fc" id="L33">    Map&lt;String, List&lt;RosterStudent&gt;&gt; byShortName =</span>
+<span class="fc" id="L34">        students.stream().collect(Collectors.groupingBy(s -&gt; shortNames.get(s.getId())));</span>
+
+<span class="fc" id="L36">    HashMap&lt;Long, String&gt; result = new HashMap&lt;&gt;();</span>
+
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    for (Map.Entry&lt;String, List&lt;RosterStudent&gt;&gt; entry : byShortName.entrySet()) {</span>
+<span class="fc" id="L39">      String shortName = entry.getKey();</span>
+<span class="fc" id="L40">      List&lt;RosterStudent&gt; group = entry.getValue();</span>
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">      if (group.size() == 1) {</span>
+<span class="fc" id="L43">        result.put(group.get(0).getId(), shortName);</span>
+      } else {
+        // Try disambiguating with first initial of last name
+<span class="fc" id="L46">        Map&lt;String, List&lt;RosterStudent&gt;&gt; byInitial =</span>
+<span class="fc" id="L47">            group.stream()</span>
+<span class="fc" id="L48">                .collect(</span>
+<span class="fc" id="L49">                    Collectors.groupingBy(</span>
+                        s -&gt; {
+<span class="fc" id="L51">                          String ln = s.getLastName();</span>
+                          String initial =
+<span class="pc bpc" id="L53" title="1 of 4 branches missed.">                              (ln != null &amp;&amp; !ln.isEmpty()) ? String.valueOf(ln.charAt(0)) : &quot;&quot;;</span>
+<span class="fc" id="L54">                          return shortName + &quot; &quot; + initial;</span>
+                        }));
+
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        for (Map.Entry&lt;String, List&lt;RosterStudent&gt;&gt; initialEntry : byInitial.entrySet()) {</span>
+<span class="fc" id="L58">          String withInitial = initialEntry.getKey();</span>
+<span class="fc" id="L59">          List&lt;RosterStudent&gt; initialGroup = initialEntry.getValue();</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">          if (initialGroup.size() == 1) {</span>
+<span class="fc" id="L62">            result.put(initialGroup.get(0).getId(), withInitial);</span>
+          } else {
+            // Use full last name; if still duplicate, leave as-is per spec
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            for (RosterStudent s : initialGroup) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">              String ln = s.getLastName() != null ? s.getLastName() : &quot;&quot;;</span>
+<span class="fc" id="L67">              result.put(s.getId(), shortName + &quot; &quot; + ln);</span>
+<span class="fc" id="L68">            }</span>
+          }
+<span class="fc" id="L70">        }</span>
+      }
+<span class="fc" id="L72">    }</span>
+
+<span class="fc" id="L74">    return result;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

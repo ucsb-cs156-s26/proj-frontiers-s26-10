@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CourseTeamsCSVService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">frontiers</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.frontiers.services</a> &gt; <span class="el_source">CourseTeamsCSVService.java</span></div><h1>CourseTeamsCSVService.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.frontiers.services;
+
+import edu.ucsb.cs156.frontiers.entities.RosterStudent;
+import edu.ucsb.cs156.frontiers.entities.Team;
+import edu.ucsb.cs156.frontiers.repositories.RosterStudentRepository;
+import edu.ucsb.cs156.frontiers.repositories.TeamRepository;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+<span class="fc" id="L17">public class CourseTeamsCSVService {</span>
+
+  static final int NAMES_PER_COLUMN = 24;
+  static final int TEAMS_PER_COLUMN = 4;
+
+  @Autowired private RosterStudentRepository rosterStudentRepository;
+  @Autowired private TeamRepository teamRepository;
+  @Autowired private CourseUniqueNameService courseUniqueNameService;
+
+  public String buildTeamsCSV(Long courseId) {
+<span class="fc" id="L27">    HashMap&lt;Long, String&gt; uniqueNames = courseUniqueNameService.getUniqueNames(courseId);</span>
+
+<span class="fc" id="L29">    List&lt;RosterStudent&gt; students =</span>
+<span class="fc" id="L30">        StreamSupport.stream(rosterStudentRepository.findByCourseId(courseId).spliterator(), false)</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">            .filter(s -&gt; !s.getTeams().isEmpty())</span>
+<span class="fc" id="L32">            .sorted(Comparator.comparing(s -&gt; uniqueNames.getOrDefault(s.getId(), &quot;&quot;)))</span>
+<span class="fc" id="L33">            .collect(Collectors.toList());</span>
+
+<span class="fc" id="L35">    List&lt;Team&gt; teams =</span>
+<span class="fc" id="L36">        StreamSupport.stream(</span>
+<span class="fc" id="L37">                teamRepository.findByCourseIdOrderByNameAsc(courseId).spliterator(), false)</span>
+<span class="fc" id="L38">            .collect(Collectors.toList());</span>
+
+<span class="fc" id="L40">    StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L41">    appendByNameSection(sb, students, uniqueNames);</span>
+<span class="fc" id="L42">    appendByTeamSection(sb, teams, uniqueNames);</span>
+<span class="fc" id="L43">    return sb.toString();</span>
+  }
+
+  private void appendByNameSection(
+      StringBuilder sb, List&lt;RosterStudent&gt; students, HashMap&lt;Long, String&gt; uniqueNames) {
+<span class="fc" id="L48">    int numStudents = students.size();</span>
+<span class="fc" id="L49">    int numColumns = (int) Math.ceil((double) numStudents / NAMES_PER_COLUMN);</span>
+
+<span class="fc" id="L51">    sb.append(&quot;by name\n&quot;);</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">    for (int c = 0; c &lt; numColumns; c++) {</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">      if (c &gt; 0) sb.append(&quot;,,&quot;);</span>
+<span class="fc" id="L55">      sb.append(&quot;Name,Team&quot;);</span>
+    }
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    if (numColumns &gt; 0) sb.append(&quot;\n&quot;);</span>
+
+<span class="fc bfc" id="L59" title="All 2 branches covered.">    for (int row = 0; row &lt; NAMES_PER_COLUMN; row++) {</span>
+<span class="fc" id="L60">      boolean anyData = false;</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">      for (int col = 0; col &lt; numColumns; col++) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (row + col * NAMES_PER_COLUMN &lt; numStudents) {</span>
+<span class="fc" id="L63">          anyData = true;</span>
+<span class="fc" id="L64">          break;</span>
+        }
+      }
+<span class="fc bfc" id="L67" title="All 2 branches covered.">      if (!anyData) break;</span>
+
+<span class="fc bfc" id="L69" title="All 2 branches covered.">      for (int col = 0; col &lt; numColumns; col++) {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (col &gt; 0) sb.append(&quot;,,&quot;);</span>
+<span class="fc" id="L71">        int idx = row + col * NAMES_PER_COLUMN;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (idx &lt; numStudents) {</span>
+<span class="fc" id="L73">          RosterStudent student = students.get(idx);</span>
+<span class="fc" id="L74">          String name = uniqueNames.getOrDefault(student.getId(), &quot;&quot;);</span>
+<span class="fc" id="L75">          String team = student.getTeams().stream().sorted().findFirst().orElse(&quot;&quot;);</span>
+<span class="fc" id="L76">          sb.append(name).append(&quot;,&quot;).append(team);</span>
+<span class="fc" id="L77">        } else {</span>
+<span class="fc" id="L78">          sb.append(&quot;,&quot;);</span>
+        }
+      }
+<span class="fc" id="L81">      sb.append(&quot;\n&quot;);</span>
+    }
+<span class="fc" id="L83">  }</span>
+
+  private void appendByTeamSection(
+      StringBuilder sb, List&lt;Team&gt; teams, HashMap&lt;Long, String&gt; uniqueNames) {
+<span class="fc" id="L87">    int numTeams = teams.size();</span>
+<span class="fc" id="L88">    int numColumns = (int) Math.ceil((double) numTeams / TEAMS_PER_COLUMN);</span>
+
+<span class="fc" id="L90">    sb.append(&quot;by team\n&quot;);</span>
+
+<span class="fc bfc" id="L92" title="All 2 branches covered.">    for (int c = 0; c &lt; numColumns; c++) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">      if (c &gt; 0) sb.append(&quot;,,&quot;);</span>
+<span class="fc" id="L94">      sb.append(&quot;Team,Name&quot;);</span>
+    }
+<span class="fc bfc" id="L96" title="All 2 branches covered.">    if (numColumns &gt; 0) sb.append(&quot;\n&quot;);</span>
+
+    // Each layer corresponds to one team-slot per column
+<span class="fc bfc" id="L99" title="All 2 branches covered.">    for (int layer = 0; layer &lt; TEAMS_PER_COLUMN; layer++) {</span>
+<span class="fc" id="L100">      List&lt;Team&gt; layerTeams = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">      for (int col = 0; col &lt; numColumns; col++) {</span>
+<span class="fc" id="L102">        int teamIdx = layer + col * TEAMS_PER_COLUMN;</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        layerTeams.add(teamIdx &lt; numTeams ? teams.get(teamIdx) : null);</span>
+      }
+
+<span class="fc" id="L106">      List&lt;List&lt;RosterStudent&gt;&gt; layerMembers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L107">      int maxMembers = 0;</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">      for (Team team : layerTeams) {</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (team == null) {</span>
+<span class="fc" id="L110">          layerMembers.add(List.of());</span>
+        } else {
+<span class="fc" id="L112">          List&lt;RosterStudent&gt; members =</span>
+<span class="fc" id="L113">              team.getTeamMembers().stream()</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">                  .filter(tm -&gt; tm.getRosterStudent() != null)</span>
+<span class="fc" id="L115">                  .map(tm -&gt; tm.getRosterStudent())</span>
+<span class="fc" id="L116">                  .sorted(Comparator.comparing(s -&gt; uniqueNames.getOrDefault(s.getId(), &quot;&quot;)))</span>
+<span class="fc" id="L117">                  .collect(Collectors.toList());</span>
+<span class="fc" id="L118">          layerMembers.add(members);</span>
+<span class="fc" id="L119">          maxMembers = Math.max(maxMembers, members.size());</span>
+        }
+<span class="fc" id="L121">      }</span>
+
+<span class="fc bfc" id="L123" title="All 2 branches covered.">      for (int memberIdx = 0; memberIdx &lt; maxMembers; memberIdx++) {</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        for (int col = 0; col &lt; numColumns; col++) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">          if (col &gt; 0) sb.append(&quot;,,&quot;);</span>
+<span class="fc" id="L126">          Team team = layerTeams.get(col);</span>
+<span class="fc" id="L127">          List&lt;RosterStudent&gt; members = layerMembers.get(col);</span>
+<span class="pc bpc" id="L128" title="1 of 4 branches missed.">          if (team != null &amp;&amp; memberIdx &lt; members.size()) {</span>
+<span class="fc" id="L129">            String name = uniqueNames.getOrDefault(members.get(memberIdx).getId(), &quot;&quot;);</span>
+<span class="fc" id="L130">            sb.append(team.getName()).append(&quot;,&quot;).append(name);</span>
+<span class="fc" id="L131">          } else {</span>
+<span class="fc" id="L132">            sb.append(&quot;,&quot;);</span>
+          }
+        }
+<span class="fc" id="L135">        sb.append(&quot;\n&quot;);</span>
+      }
+    }
+<span class="fc" id="L138">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
