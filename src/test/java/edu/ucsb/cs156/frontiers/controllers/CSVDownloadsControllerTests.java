@@ -21,6 +21,7 @@ import edu.ucsb.cs156.frontiers.models.CourseStaffDTO;
 import edu.ucsb.cs156.frontiers.models.RosterStudentDTO;
 import edu.ucsb.cs156.frontiers.repositories.CourseRepository;
 import edu.ucsb.cs156.frontiers.services.CourseStaffDTOService;
+import edu.ucsb.cs156.frontiers.services.CourseTeamsCSVService;
 import edu.ucsb.cs156.frontiers.services.RosterStudentDTOService;
 import edu.ucsb.cs156.frontiers.testconfig.TestConfig;
 import java.util.List;
@@ -47,6 +48,9 @@ public class CSVDownloadsControllerTests extends ControllerTestCase {
 
   @MockitoBean(answers = Answers.CALLS_REAL_METHODS)
   CourseStaffDTOService courseStaffDTOService;
+
+  @MockitoBean(answers = Answers.CALLS_REAL_METHODS)
+  CourseTeamsCSVService courseTeamsCSVService;
 
   @MockitoBean(answers = Answers.RETURNS_MOCKS)
   CourseRepository courseRepository;
@@ -265,5 +269,53 @@ public class CSVDownloadsControllerTests extends ControllerTestCase {
     verify(courseStaffDTOService, times(1)).getStatefulBeanToCSV(any());
 
     assertEquals(expectedResponse, response.getResponse().getContentAsString());
+  }
+
+  // ============ Teams CSV Tests ============
+
+  @Test
+  @WithMockUser(roles = {"ADMIN"})
+  public void test_teams_csv_no_such_course() throws Exception {
+    when(courseRepository.findById(eq(1L))).thenReturn(Optional.empty());
+
+    MvcResult response = mockMvc.perform(get("/api/csv/teams?courseId=1")).andReturn();
+
+    Map<String, String> errorResponse =
+        objectMapper.readValue(
+            response.getResponse().getContentAsString(),
+            new TypeReference<Map<String, String>>() {});
+    Map<String, String> expectedResponse =
+        Map.of("message", "Course with id 1 not found", "type", "EntityNotFoundException");
+    assertEquals(expectedResponse, errorResponse);
+    assertEquals(HttpStatus.NOT_FOUND.value(), response.getResponse().getStatus());
+  }
+
+  @Test
+  @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+  @WithInstructorCoursePermissions
+  public void test_teams_csv_download() throws Exception {
+    Course course =
+        Course.builder()
+            .id(1L)
+            .courseName("ucsb-cs156-s25")
+            .term("S25")
+            .school(School.UCSB)
+            .build();
+
+    String expectedCsv = "by name\nName,Team\nAlice,t-01\nby team\nTeam,Name\nt-01,Alice\n";
+
+    doReturn(Optional.of(course)).when(courseRepository).findById(eq(1L));
+    doReturn(expectedCsv).when(courseTeamsCSVService).buildTeamsCSV(eq(1L));
+
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/csv/teams?courseId=1"))
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().isOk())
+            .andReturn();
+
+    verify(courseTeamsCSVService, times(1)).buildTeamsCSV(eq(1L));
+    assertEquals(expectedCsv, response.getResponse().getContentAsString());
   }
 }

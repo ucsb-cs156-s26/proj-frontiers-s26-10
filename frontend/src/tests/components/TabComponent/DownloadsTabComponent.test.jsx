@@ -32,4 +32,29 @@ describe("DownloadsTabComponent Tests", () => {
 
     openSpy.mockRestore();
   });
+
+  test("renders Download Teams CSV button", () => {
+    render(<DownloadsTabComponent courseId={1} testIdPrefix={testId} />);
+
+    expect(
+      screen.getByTestId(`${testId}-download-teams-csv-button`),
+    ).toHaveTextContent("Download Teams CSV");
+  });
+
+  test("clicking Download Teams CSV opens the correct URL", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => {});
+
+    render(<DownloadsTabComponent courseId={42} testIdPrefix={testId} />);
+
+    fireEvent.click(
+      screen.getByTestId(`${testId}-download-teams-csv-button`),
+    );
+
+    expect(openSpy).toHaveBeenCalledWith(
+      "/api/csv/teams?courseId=42",
+      "_blank",
+    );
+
+    openSpy.mockRestore();
+  });
 });
