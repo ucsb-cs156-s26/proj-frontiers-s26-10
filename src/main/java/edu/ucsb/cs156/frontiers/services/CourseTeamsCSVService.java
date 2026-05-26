@@ -27,8 +27,7 @@ public class CourseTeamsCSVService {
     HashMap<Long, String> uniqueNames = courseUniqueNameService.getUniqueNames(courseId);
 
     List<RosterStudent> students =
-        StreamSupport.stream(
-                rosterStudentRepository.findByCourseId(courseId).spliterator(), false)
+        StreamSupport.stream(rosterStudentRepository.findByCourseId(courseId).spliterator(), false)
             .filter(s -> !s.getTeams().isEmpty())
             .sorted(Comparator.comparing(s -> uniqueNames.getOrDefault(s.getId(), "")))
             .collect(Collectors.toList());

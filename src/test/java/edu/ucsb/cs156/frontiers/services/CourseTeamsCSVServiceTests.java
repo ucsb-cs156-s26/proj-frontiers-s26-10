@@ -180,8 +180,7 @@ public class CourseTeamsCSVServiceTests {
     uniqueNames.put(2L, "BOB");
     uniqueNames.put(3L, "CHARLIE");
 
-    when(rosterStudentRepository.findByCourseId(1L))
-        .thenReturn(List.of(charlie, alice, bob));
+    when(rosterStudentRepository.findByCourseId(1L)).thenReturn(List.of(charlie, alice, bob));
     when(teamRepository.findByCourseIdOrderByNameAsc(1L)).thenReturn(List.of(team));
     when(courseUniqueNameService.getUniqueNames(1L)).thenReturn(uniqueNames);
 
@@ -239,10 +238,8 @@ public class CourseTeamsCSVServiceTests {
     uniqueNames.put(4L, "DAN");
     uniqueNames.put(5L, "EVE");
 
-    when(rosterStudentRepository.findByCourseId(1L))
-        .thenReturn(List.of(s1, s2, s3, s4, s5));
-    when(teamRepository.findByCourseIdOrderByNameAsc(1L))
-        .thenReturn(List.of(t1, t2, t3, t4, t5));
+    when(rosterStudentRepository.findByCourseId(1L)).thenReturn(List.of(s1, s2, s3, s4, s5));
+    when(teamRepository.findByCourseIdOrderByNameAsc(1L)).thenReturn(List.of(t1, t2, t3, t4, t5));
     when(courseUniqueNameService.getUniqueNames(1L)).thenReturn(uniqueNames);
 
     String csv = courseTeamsCSVService.buildTeamsCSV(1L);
@@ -298,7 +295,7 @@ public class CourseTeamsCSVServiceTests {
     RosterStudent bob = student(2L, "BOB", "JONES");
 
     alice.setTeamMembers(List.of()); // no team
-    bob.setTeamMembers(null);        // no team
+    bob.setTeamMembers(null); // no team
 
     HashMap<Long, String> uniqueNames = new HashMap<>();
     uniqueNames.put(1L, "ALICE");

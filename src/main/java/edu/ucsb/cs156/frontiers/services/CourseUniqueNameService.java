@@ -17,8 +17,7 @@ public class CourseUniqueNameService {
 
   public HashMap<Long, String> getUniqueNames(Long courseId) {
     List<RosterStudent> students =
-        StreamSupport.stream(
-                rosterStudentRepository.findByCourseId(courseId).spliterator(), false)
+        StreamSupport.stream(rosterStudentRepository.findByCourseId(courseId).spliterator(), false)
             .collect(Collectors.toList());
     return computeUniqueNames(students);
   }

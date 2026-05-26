@@ -25,11 +25,7 @@ public class CourseUniqueNameServiceTests {
   }
 
   private RosterStudent student(long id, String firstName, String lastName) {
-    return RosterStudent.builder()
-        .id(id)
-        .firstName(firstName)
-        .lastName(lastName)
-        .build();
+    return RosterStudent.builder().id(id).firstName(firstName).lastName(lastName).build();
   }
 
   @Test
@@ -51,9 +47,7 @@ public class CourseUniqueNameServiceTests {
   public void test_initial_disambiguates_duplicate_short_names() {
     // RICHARD BURTON and RICHARD JENKINS — initial disambiguates
     List<RosterStudent> students =
-        List.of(
-            student(1L, "RICHARD FRANCIS", "BURTON"),
-            student(14L, "RICHARD DALE", "JENKINS"));
+        List.of(student(1L, "RICHARD FRANCIS", "BURTON"), student(14L, "RICHARD DALE", "JENKINS"));
 
     HashMap<Long, String> result = courseUniqueNameService.computeUniqueNames(students);
 
@@ -121,9 +115,7 @@ public class CourseUniqueNameServiceTests {
   @Test
   public void test_getUniqueNames_delegates_to_repository() {
     List<RosterStudent> students =
-        List.of(
-            student(1L, "ALICE", "SMITH"),
-            student(2L, "BOB", "JONES"));
+        List.of(student(1L, "ALICE", "SMITH"), student(2L, "BOB", "JONES"));
 
     when(rosterStudentRepository.findByCourseId(42L)).thenReturn(students);
 
@@ -134,16 +126,21 @@ public class CourseUniqueNameServiceTests {
   }
 
   @Test
-  public void test_null_and_blank_first_names_handled() {
-    List<RosterStudent> students =
-        List.of(
-            student(1L, null, "SMITH"),
-            student(2L, "  ", "JONES"));
+  public void test_null_first_name_handled() {
+    List<RosterStudent> students = List.of(student(1L, null, "SMITH"));
 
     HashMap<Long, String> result = courseUniqueNameService.computeUniqueNames(students);
 
     assertEquals("", result.get(1L));
-    assertEquals("", result.get(2L));
+  }
+
+  @Test
+  public void test_blank_first_name_handled() {
+    List<RosterStudent> students = List.of(student(1L, "  ", "JONES"));
+
+    HashMap<Long, String> result = courseUniqueNameService.computeUniqueNames(students);
+
+    assertEquals("", result.get(1L));
   }
 
   @Test
@@ -158,9 +155,7 @@ public class CourseUniqueNameServiceTests {
     // Two JOHNs with null last names — initial is "" for both, so full last name is also ""
     // Per spec: leave as duplicate
     List<RosterStudent> students =
-        List.of(
-            student(1L, "JOHN PAUL", null),
-            student(2L, "JOHN ROGER", null));
+        List.of(student(1L, "JOHN PAUL", null), student(2L, "JOHN ROGER", null));
 
     HashMap<Long, String> result = courseUniqueNameService.computeUniqueNames(students);
 
