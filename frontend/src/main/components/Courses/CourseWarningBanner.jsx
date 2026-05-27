@@ -1,5 +1,10 @@
-import { Alert } from "react-bootstrap";
-import { useBackend } from "main/utils/useBackend";
+import { Alert, Button } from "react-bootstrap";
+import { useBackend, useBackendMutation } from "main/utils/useBackend";
+
+const objectToAxiosParams = (courseId) => ({
+  url: `/api/courses/hidePermissionWarning?courseId=${courseId}`,
+  method: "POST",
+});
 
 export function CourseWarningBanner({ courseId, orgName }) {
   const { data: warnings } = useBackend(
@@ -16,9 +21,20 @@ export function CourseWarningBanner({ courseId, orgName }) {
     },
   );
 
+  const hideWarningMutation = useBackendMutation(
+    () => objectToAxiosParams(courseId),
+    {},
+    // Stryker disable next-line ArrayDeclaration,StringLiteral : cache key string equality is an implementation detail
+    [`/api/courses/warnings/${courseId}`],
+  );
+
   const permission = warnings?.defaultBasePermission;
   const showPermissionWarning =
-    permission && permission !== "none" && permission !== "null";
+    permission &&
+    permission !== "none" &&
+    permission !== "null" &&
+    // Stryker disable next-line OptionalChaining : placeholder data ensures warnings is never null
+    !warnings?.hideBasePermissionWarning;
 
   return (
     <>
@@ -42,6 +58,15 @@ export function CourseWarningBanner({ courseId, orgName }) {
               Change this in GitHub settings.
             </Alert.Link>
           )}
+          &nbsp;
+          <Button
+            variant="warning"
+            size="sm"
+            data-testid="CourseWarningBanner-dismiss-button"
+            onClick={() => hideWarningMutation.mutate()}
+          >
+            Dismiss
+          </Button>
         </Alert>
       )}
     </>

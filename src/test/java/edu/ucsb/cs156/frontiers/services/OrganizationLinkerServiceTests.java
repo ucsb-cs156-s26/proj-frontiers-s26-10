@@ -253,4 +253,46 @@ public class OrganizationLinkerServiceTests {
     assertFalse(warning.showOrganizationAgeWarning());
     mockRestServiceServer.verify();
   }
+
+  @Test
+  public void hideBasePermissionWarning_false_when_not_set() throws Exception {
+    Course course = Course.builder().orgName("ucsb-cs156").build();
+    CourseWarning warning = organizationLinkerService.checkCourseWarnings(course);
+    assertFalse(warning.hideBasePermissionWarning());
+  }
+
+  @Test
+  public void hideBasePermissionWarning_true_when_set_and_no_org() throws Exception {
+    Course course = Course.builder().orgName("ucsb-cs156").hideBasePermissionWarning(true).build();
+    CourseWarning warning = organizationLinkerService.checkCourseWarnings(course);
+    assertTrue(warning.hideBasePermissionWarning());
+  }
+
+  @Test
+  public void hideBasePermissionWarning_true_when_set_with_org() throws Exception {
+    Course course =
+        Course.builder()
+            .orgName("ucsb-cs156")
+            .installationId("12345")
+            .hideBasePermissionWarning(true)
+            .build();
+    when(provider.getNow())
+        .thenReturn(Optional.of(ZonedDateTime.of(2025, 3, 11, 0, 0, 0, 0, ZoneId.of("UTC"))));
+    doReturn("definitely.real.jwt").when(jwtService).getInstallationToken(eq(course));
+    String apiResponse =
+        """
+            {
+              "created_at": "2024-10-11T04:33:35Z",
+              "default_repository_permission": "read"
+            }
+            """;
+    mockRestServiceServer
+        .expect(requestTo("https://api.github.com/orgs/ucsb-cs156"))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withSuccess(apiResponse, MediaType.APPLICATION_JSON));
+
+    CourseWarning warning = organizationLinkerService.checkCourseWarnings(course);
+    assertTrue(warning.hideBasePermissionWarning());
+    assertEquals("read", warning.defaultBasePermission());
+  }
 }

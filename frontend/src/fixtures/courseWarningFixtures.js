@@ -33,6 +33,12 @@ const noOrgLinked = {
   defaultBasePermission: "null",
 };
 
+const warningHidden = {
+  showOrganizationAgeWarning: false,
+  defaultBasePermission: "read",
+  hideBasePermissionWarning: true,
+};
+
 export {
   showOrganizationAgeWarning,
   hideOrganizationAgeWarning,
@@ -41,4 +47,5 @@ export {
   adminBasePermission,
   bothWarnings,
   noOrgLinked,
+  warningHidden,
 };

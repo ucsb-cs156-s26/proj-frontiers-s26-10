@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.frontiers.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -1881,14 +1882,15 @@ public class CoursesControllerTests extends ControllerTestCase {
             .build();
 
     when(courseRepository.findById(eq(1L))).thenReturn(Optional.of(course));
-    when(linkerService.checkCourseWarnings(eq(course))).thenReturn(new CourseWarning(true, "none"));
+    when(linkerService.checkCourseWarnings(eq(course)))
+        .thenReturn(new CourseWarning(true, "none", false));
 
     MvcResult response =
         mockMvc.perform(get("/api/courses/warnings/1")).andExpect(status().isOk()).andReturn();
 
     verify(linkerService).checkCourseWarnings(eq(course));
     String responseString = response.getResponse().getContentAsString();
-    String expectedJson = mapper.writeValueAsString(new CourseWarning(true, "none"));
+    String expectedJson = mapper.writeValueAsString(new CourseWarning(true, "none", false));
     assertEquals(expectedJson, responseString);
   }
 
@@ -1999,5 +2001,49 @@ public class CoursesControllerTests extends ControllerTestCase {
 
     assertEquals("existingToken", originalCourse.getCanvasApiToken());
     assertEquals("existingCourseId", originalCourse.getCanvasCourseId());
+  }
+
+  @Test
+  @WithInstructorCoursePermissions
+  public void hidePermissionWarning_sets_flag_and_saves() throws Exception {
+    Course course =
+        Course.builder()
+            .id(1L)
+            .courseName("CS156")
+            .term("S25")
+            .school(School.UCSB)
+            .instructorEmail("test@example.com")
+            .hideBasePermissionWarning(false)
+            .build();
+
+    when(courseRepository.findById(eq(1L))).thenReturn(Optional.of(course));
+    when(courseRepository.save(any(Course.class))).thenAnswer(i -> i.getArgument(0));
+
+    mockMvc
+        .perform(post("/api/courses/hidePermissionWarning").param("courseId", "1").with(csrf()))
+        .andExpect(status().isOk());
+
+    assertTrue(course.getHideBasePermissionWarning());
+    verify(courseRepository).save(course);
+  }
+
+  @Test
+  @WithInstructorCoursePermissions
+  public void hidePermissionWarning_not_found() throws Exception {
+    doReturn(Optional.empty()).when(courseRepository).findById(eq(1L));
+
+    MvcResult response =
+        mockMvc
+            .perform(post("/api/courses/hidePermissionWarning").param("courseId", "1").with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    String responseString = response.getResponse().getContentAsString();
+    Map<String, String> expectedMap =
+        Map.of(
+            "type", "EntityNotFoundException",
+            "message", "Course with id 1 not found");
+    String expectedJson = mapper.writeValueAsString(expectedMap);
+    assertEquals(expectedJson, responseString);
   }
 }

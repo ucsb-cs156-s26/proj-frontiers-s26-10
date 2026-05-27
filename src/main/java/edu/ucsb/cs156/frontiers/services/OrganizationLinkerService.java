@@ -88,7 +88,7 @@ public class OrganizationLinkerService {
       throws NoSuchAlgorithmException, InvalidKeySpecException, JsonProcessingException {
 
     if (course.getOrgName() == null || course.getInstallationId() == null) {
-      return new CourseWarning(false, "null");
+      return new CourseWarning(false, "null", course.getHideBasePermissionWarning());
     }
 
     String ENDPOINT = "https://api.github.com/orgs/" + course.getOrgName();
@@ -106,7 +106,10 @@ public class OrganizationLinkerService {
 
     String basePermission = responseJson.get("default_repository_permission").asText();
 
-    return new CourseWarning(creationDate.isAfter(now.minusMonths(1)), basePermission);
+    return new CourseWarning(
+        creationDate.isAfter(now.minusMonths(1)),
+        basePermission,
+        course.getHideBasePermissionWarning());
   }
 
   /**
