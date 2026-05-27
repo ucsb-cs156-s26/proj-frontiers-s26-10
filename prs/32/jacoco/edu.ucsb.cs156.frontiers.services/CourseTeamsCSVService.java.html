@@ -56,85 +56,77 @@ import org.springframework.stereotype.Service;
     }
 <span class="fc bfc" id="L57" title="All 2 branches covered.">    if (numColumns &gt; 0) sb.append(&quot;\n&quot;);</span>
 
-<span class="fc bfc" id="L59" title="All 2 branches covered.">    for (int row = 0; row &lt; NAMES_PER_COLUMN; row++) {</span>
-<span class="fc" id="L60">      boolean anyData = false;</span>
+<span class="fc" id="L59">    int numRows = Math.min(numStudents, NAMES_PER_COLUMN);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">    for (int row = 0; row &lt; numRows; row++) {</span>
 <span class="fc bfc" id="L61" title="All 2 branches covered.">      for (int col = 0; col &lt; numColumns; col++) {</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (row + col * NAMES_PER_COLUMN &lt; numStudents) {</span>
-<span class="fc" id="L63">          anyData = true;</span>
-<span class="fc" id="L64">          break;</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (col &gt; 0) sb.append(&quot;,,&quot;);</span>
+<span class="fc" id="L63">        int idx = row + col * NAMES_PER_COLUMN;</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (idx &lt; numStudents) {</span>
+<span class="fc" id="L65">          RosterStudent student = students.get(idx);</span>
+<span class="fc" id="L66">          String name = uniqueNames.getOrDefault(student.getId(), &quot;&quot;);</span>
+<span class="fc" id="L67">          String team = student.getTeams().stream().sorted().findFirst().orElse(&quot;&quot;);</span>
+<span class="fc" id="L68">          sb.append(name).append(&quot;,&quot;).append(team);</span>
+<span class="fc" id="L69">        } else {</span>
+<span class="fc" id="L70">          sb.append(&quot;,&quot;);</span>
         }
       }
-<span class="fc bfc" id="L67" title="All 2 branches covered.">      if (!anyData) break;</span>
-
-<span class="fc bfc" id="L69" title="All 2 branches covered.">      for (int col = 0; col &lt; numColumns; col++) {</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (col &gt; 0) sb.append(&quot;,,&quot;);</span>
-<span class="fc" id="L71">        int idx = row + col * NAMES_PER_COLUMN;</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (idx &lt; numStudents) {</span>
-<span class="fc" id="L73">          RosterStudent student = students.get(idx);</span>
-<span class="fc" id="L74">          String name = uniqueNames.getOrDefault(student.getId(), &quot;&quot;);</span>
-<span class="fc" id="L75">          String team = student.getTeams().stream().sorted().findFirst().orElse(&quot;&quot;);</span>
-<span class="fc" id="L76">          sb.append(name).append(&quot;,&quot;).append(team);</span>
-<span class="fc" id="L77">        } else {</span>
-<span class="fc" id="L78">          sb.append(&quot;,&quot;);</span>
-        }
-      }
-<span class="fc" id="L81">      sb.append(&quot;\n&quot;);</span>
+<span class="fc" id="L73">      sb.append(&quot;\n&quot;);</span>
     }
-<span class="fc" id="L83">  }</span>
+<span class="fc" id="L75">  }</span>
 
   private void appendByTeamSection(
       StringBuilder sb, List&lt;Team&gt; teams, HashMap&lt;Long, String&gt; uniqueNames) {
-<span class="fc" id="L87">    int numTeams = teams.size();</span>
-<span class="fc" id="L88">    int numColumns = (int) Math.ceil((double) numTeams / TEAMS_PER_COLUMN);</span>
+<span class="fc" id="L79">    int numTeams = teams.size();</span>
+<span class="fc" id="L80">    int numColumns = (int) Math.ceil((double) numTeams / TEAMS_PER_COLUMN);</span>
 
-<span class="fc" id="L90">    sb.append(&quot;by team\n&quot;);</span>
+<span class="fc" id="L82">    sb.append(&quot;by team\n&quot;);</span>
 
-<span class="fc bfc" id="L92" title="All 2 branches covered.">    for (int c = 0; c &lt; numColumns; c++) {</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">      if (c &gt; 0) sb.append(&quot;,,&quot;);</span>
-<span class="fc" id="L94">      sb.append(&quot;Team,Name&quot;);</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">    for (int c = 0; c &lt; numColumns; c++) {</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">      if (c &gt; 0) sb.append(&quot;,,&quot;);</span>
+<span class="fc" id="L86">      sb.append(&quot;Team,Name&quot;);</span>
     }
-<span class="fc bfc" id="L96" title="All 2 branches covered.">    if (numColumns &gt; 0) sb.append(&quot;\n&quot;);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">    if (numColumns &gt; 0) sb.append(&quot;\n&quot;);</span>
 
     // Each layer corresponds to one team-slot per column
-<span class="fc bfc" id="L99" title="All 2 branches covered.">    for (int layer = 0; layer &lt; TEAMS_PER_COLUMN; layer++) {</span>
-<span class="fc" id="L100">      List&lt;Team&gt; layerTeams = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">      for (int col = 0; col &lt; numColumns; col++) {</span>
-<span class="fc" id="L102">        int teamIdx = layer + col * TEAMS_PER_COLUMN;</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">        layerTeams.add(teamIdx &lt; numTeams ? teams.get(teamIdx) : null);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    for (int layer = 0; layer &lt; TEAMS_PER_COLUMN; layer++) {</span>
+<span class="fc" id="L92">      List&lt;Team&gt; layerTeams = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">      for (int col = 0; col &lt; numColumns; col++) {</span>
+<span class="fc" id="L94">        int teamIdx = layer + col * TEAMS_PER_COLUMN;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        layerTeams.add(teamIdx &lt; numTeams ? teams.get(teamIdx) : null);</span>
       }
 
-<span class="fc" id="L106">      List&lt;List&lt;RosterStudent&gt;&gt; layerMembers = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L107">      int maxMembers = 0;</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">      for (Team team : layerTeams) {</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (team == null) {</span>
-<span class="fc" id="L110">          layerMembers.add(List.of());</span>
+<span class="fc" id="L98">      List&lt;List&lt;RosterStudent&gt;&gt; layerMembers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L99">      int maxMembers = 0;</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">      for (Team team : layerTeams) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (team == null) {</span>
+<span class="fc" id="L102">          layerMembers.add(List.of());</span>
         } else {
-<span class="fc" id="L112">          List&lt;RosterStudent&gt; members =</span>
-<span class="fc" id="L113">              team.getTeamMembers().stream()</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">                  .filter(tm -&gt; tm.getRosterStudent() != null)</span>
-<span class="fc" id="L115">                  .map(tm -&gt; tm.getRosterStudent())</span>
-<span class="fc" id="L116">                  .sorted(Comparator.comparing(s -&gt; uniqueNames.getOrDefault(s.getId(), &quot;&quot;)))</span>
-<span class="fc" id="L117">                  .collect(Collectors.toList());</span>
-<span class="fc" id="L118">          layerMembers.add(members);</span>
-<span class="fc" id="L119">          maxMembers = Math.max(maxMembers, members.size());</span>
+<span class="fc" id="L104">          List&lt;RosterStudent&gt; members =</span>
+<span class="fc" id="L105">              team.getTeamMembers().stream()</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                  .filter(tm -&gt; tm.getRosterStudent() != null)</span>
+<span class="fc" id="L107">                  .map(tm -&gt; tm.getRosterStudent())</span>
+<span class="fc" id="L108">                  .sorted(Comparator.comparing(s -&gt; uniqueNames.getOrDefault(s.getId(), &quot;&quot;)))</span>
+<span class="fc" id="L109">                  .collect(Collectors.toList());</span>
+<span class="fc" id="L110">          layerMembers.add(members);</span>
+<span class="fc" id="L111">          maxMembers = Math.max(maxMembers, members.size());</span>
         }
-<span class="fc" id="L121">      }</span>
+<span class="fc" id="L113">      }</span>
 
-<span class="fc bfc" id="L123" title="All 2 branches covered.">      for (int memberIdx = 0; memberIdx &lt; maxMembers; memberIdx++) {</span>
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        for (int col = 0; col &lt; numColumns; col++) {</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">          if (col &gt; 0) sb.append(&quot;,,&quot;);</span>
-<span class="fc" id="L126">          Team team = layerTeams.get(col);</span>
-<span class="fc" id="L127">          List&lt;RosterStudent&gt; members = layerMembers.get(col);</span>
-<span class="pc bpc" id="L128" title="1 of 4 branches missed.">          if (team != null &amp;&amp; memberIdx &lt; members.size()) {</span>
-<span class="fc" id="L129">            String name = uniqueNames.getOrDefault(members.get(memberIdx).getId(), &quot;&quot;);</span>
-<span class="fc" id="L130">            sb.append(team.getName()).append(&quot;,&quot;).append(name);</span>
-<span class="fc" id="L131">          } else {</span>
-<span class="fc" id="L132">            sb.append(&quot;,&quot;);</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">      for (int memberIdx = 0; memberIdx &lt; maxMembers; memberIdx++) {</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        for (int col = 0; col &lt; layerTeams.size(); col++) {</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">          if (col &gt; 0) sb.append(&quot;,,&quot;);</span>
+<span class="fc" id="L118">          Team team = layerTeams.get(col);</span>
+<span class="fc" id="L119">          List&lt;RosterStudent&gt; members = layerMembers.get(col);</span>
+<span class="fc bfc" id="L120" title="All 4 branches covered.">          if (team != null &amp;&amp; memberIdx &lt; members.size()) {</span>
+<span class="fc" id="L121">            String name = uniqueNames.getOrDefault(members.get(memberIdx).getId(), &quot;&quot;);</span>
+<span class="fc" id="L122">            sb.append(team.getName()).append(&quot;,&quot;).append(name);</span>
+<span class="fc" id="L123">          } else {</span>
+<span class="fc" id="L124">            sb.append(&quot;,&quot;);</span>
           }
         }
-<span class="fc" id="L135">        sb.append(&quot;\n&quot;);</span>
+<span class="fc" id="L127">        sb.append(&quot;\n&quot;);</span>
       }
     }
-<span class="fc" id="L138">  }</span>
+<span class="fc" id="L130">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
