@@ -56,16 +56,8 @@ public class CourseTeamsCSVService {
     }
     if (numColumns > 0) sb.append("\n");
 
-    for (int row = 0; row < NAMES_PER_COLUMN; row++) {
-      boolean anyData = false;
-      for (int col = 0; col < numColumns; col++) {
-        if (row + col * NAMES_PER_COLUMN < numStudents) {
-          anyData = true;
-          break;
-        }
-      }
-      if (!anyData) break;
-
+    int numRows = Math.min(numStudents, NAMES_PER_COLUMN);
+    for (int row = 0; row < numRows; row++) {
       for (int col = 0; col < numColumns; col++) {
         if (col > 0) sb.append(",,");
         int idx = row + col * NAMES_PER_COLUMN;
@@ -121,7 +113,7 @@ public class CourseTeamsCSVService {
       }
 
       for (int memberIdx = 0; memberIdx < maxMembers; memberIdx++) {
-        for (int col = 0; col < numColumns; col++) {
+        for (int col = 0; col < layerTeams.size(); col++) {
           if (col > 0) sb.append(",,");
           Team team = layerTeams.get(col);
           List<RosterStudent> members = layerMembers.get(col);

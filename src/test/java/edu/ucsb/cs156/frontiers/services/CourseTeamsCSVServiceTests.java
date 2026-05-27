@@ -66,7 +66,8 @@ public class CourseTeamsCSVServiceTests {
     uniqueNames.put(2L, "BOB");
     uniqueNames.put(3L, "CAROL");
 
-    when(rosterStudentRepository.findByCourseId(1L)).thenReturn(List.of(alice, bob, carol));
+    // Provide students in reverse alphabetical order to verify sort by unique name
+    when(rosterStudentRepository.findByCourseId(1L)).thenReturn(List.of(carol, bob, alice));
     when(teamRepository.findByCourseIdOrderByNameAsc(1L)).thenReturn(List.of(team01, team02));
     when(courseUniqueNameService.getUniqueNames(1L)).thenReturn(uniqueNames);
 
@@ -124,6 +125,10 @@ public class CourseTeamsCSVServiceTests {
     assertEquals("NAME01,t-01,,NAME25,t-01", lines[2]);
     // Row 1: students[1]=NAME02 (col 0), no student at index 25 → trailing empty entry
     assertEquals("NAME02,t-01,,,", lines[3]);
+    // Row 23 (last data row): students[23]=NAME24 (col 0), col 1 is empty
+    assertEquals("NAME24,t-01,,,", lines[25]);
+    // No extra row after the 24 data rows — next line must be "by team"
+    assertEquals("by team", lines[26]);
   }
 
   // ── by name: student on multiple teams shows first alphabetically ─────────
@@ -258,6 +263,54 @@ public class CourseTeamsCSVServiceTests {
         "by name\nName,Team\nALICE,t-01\nBOB,t-02\nCAROL,t-03\nDAN,t-04\nEVE,t-05\n";
 
     assertEquals(expectedByName + expectedByTeam, csv);
+  }
+
+  // ── by team: teams in same layer with different member counts ────────────
+
+  @Test
+  public void test_by_team_different_member_counts_in_same_layer() {
+    // 5 teams so numColumns=2: col 0 holds t-01..t-04 (layers 0-3), col 1 holds t-05 (layer 0)
+    // t-01 has 2 members, t-05 has 1 member → maxMembers=2 for layer 0
+    // At memberIdx=1, t-05 has no member → must print "," not throw
+    RosterStudent alice = student(1L, "ALICE", "A");
+    RosterStudent bob = student(2L, "BOB", "B");
+    RosterStudent eve = student(5L, "EVE", "E");
+
+    Team t1 = Team.builder().id(1L).name("t-01").build();
+    Team t2 = Team.builder().id(2L).name("t-02").build();
+    Team t3 = Team.builder().id(3L).name("t-03").build();
+    Team t4 = Team.builder().id(4L).name("t-04").build();
+    Team t5 = Team.builder().id(5L).name("t-05").build();
+
+    TeamMember tm1a = member(alice, t1);
+    TeamMember tm1b = member(bob, t1);
+    TeamMember tm5 = member(eve, t5);
+
+    alice.setTeamMembers(List.of(tm1a));
+    bob.setTeamMembers(List.of(tm1b));
+    eve.setTeamMembers(List.of(tm5));
+    t1.setTeamMembers(List.of(tm1a, tm1b));
+    t2.setTeamMembers(List.of());
+    t3.setTeamMembers(List.of());
+    t4.setTeamMembers(List.of());
+    t5.setTeamMembers(List.of(tm5));
+
+    HashMap<Long, String> uniqueNames = new HashMap<>();
+    uniqueNames.put(1L, "ALICE");
+    uniqueNames.put(2L, "BOB");
+    uniqueNames.put(5L, "EVE");
+
+    when(rosterStudentRepository.findByCourseId(1L)).thenReturn(List.of(alice, bob, eve));
+    when(teamRepository.findByCourseIdOrderByNameAsc(1L)).thenReturn(List.of(t1, t2, t3, t4, t5));
+    when(courseUniqueNameService.getUniqueNames(1L)).thenReturn(uniqueNames);
+
+    String csv = courseTeamsCSVService.buildTeamsCSV(1L);
+
+    // Layer 0: t-01 (2 members) and t-05 (1 member) → maxMembers=2
+    // memberIdx=0: t-01,ALICE,,t-05,EVE
+    // memberIdx=1: t-01,BOB,,, (t-05 has no second member → prints ",")
+    assertTrue(csv.contains("t-01,ALICE,,t-05,EVE\n"));
+    assertTrue(csv.contains("t-01,BOB,,,\n"));
   }
 
   // ── null roster student in team member is filtered out ────────────────────
