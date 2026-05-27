@@ -1,7 +1,7 @@
 import AxiosMockAdapter from "axios-mock-adapter";
 import axios from "axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { CourseWarningBanner } from "main/components/Courses/CourseWarningBanner";
 import * as useBackendModule from "main/utils/useBackend";
 import { useBackend } from "main/utils/useBackend";
@@ -215,5 +215,56 @@ describe("CourseWarningBanner tests", () => {
         name: /you can change that setting here/i,
       }),
     ).not.toBeInTheDocument();
+  });
+
+  test("does not render permission warning when hideBasePermissionWarning is true", async () => {
+    axiosMock.onGet("/api/courses/warnings/1").reply(200, {
+      showOrganizationAgeWarning: false,
+      defaultBasePermission: "read",
+      hideBasePermissionWarning: true,
+    });
+    render(
+      <QueryClientProvider client={queryClient}>
+        <BannerWithProbe courseId={1} orgName="ucsb-cs156-s25" />
+      </QueryClientProvider>,
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("probe")).toHaveTextContent("read|false");
+    });
+    expect(
+      screen.queryByText(/default base permission for this organization/i),
+    ).not.toBeInTheDocument();
+  });
+
+  test("dismiss button calls hidePermissionWarning endpoint", async () => {
+    axiosMock.onGet("/api/courses/warnings/1").reply(200, {
+      showOrganizationAgeWarning: false,
+      defaultBasePermission: "read",
+      hideBasePermissionWarning: false,
+    });
+    axiosMock
+      .onPost("/api/courses/hidePermissionWarning?courseId=1")
+      .reply(200, {});
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <CourseWarningBanner courseId={1} orgName="ucsb-cs156-s25" />
+      </QueryClientProvider>,
+    );
+
+    await screen.findByText(/default base permission for this organization/i);
+
+    const dismissButton = screen.getByTestId(
+      "CourseWarningBanner-dismiss-button",
+    );
+    expect(dismissButton).toBeInTheDocument();
+    fireEvent.click(dismissButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+      expect(axiosMock.history.post[0].url).toBe(
+        "/api/courses/hidePermissionWarning?courseId=1",
+      );
+    });
   });
 });

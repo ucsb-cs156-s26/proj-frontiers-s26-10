@@ -9,6 +9,7 @@ import {
   adminBasePermission,
   bothWarnings,
   noOrgLinked,
+  warningHidden,
 } from "fixtures/courseWarningFixtures";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -124,6 +125,42 @@ NoOrgLinked.parameters = {
   msw: {
     handlers: [
       http.get("/api/courses/warnings/1", () => HttpResponse.json(noOrgLinked)),
+    ],
+  },
+};
+
+export const WarningHidden = Template.bind({});
+WarningHidden.args = {
+  courseId: 1,
+  orgName: "ucsb-cs156-s25",
+};
+WarningHidden.parameters = {
+  msw: {
+    handlers: [
+      http.get("/api/courses/warnings/1", () =>
+        HttpResponse.json(warningHidden),
+      ),
+      http.post("/api/courses/hidePermissionWarning", () =>
+        HttpResponse.json({}, { status: 200 }),
+      ),
+    ],
+  },
+};
+
+export const ReadPermissionWithDismiss = Template.bind({});
+ReadPermissionWithDismiss.args = {
+  courseId: 1,
+  orgName: "ucsb-cs156-s25",
+};
+ReadPermissionWithDismiss.parameters = {
+  msw: {
+    handlers: [
+      http.get("/api/courses/warnings/1", () =>
+        HttpResponse.json(readBasePermission),
+      ),
+      http.post("/api/courses/hidePermissionWarning", () =>
+        HttpResponse.json({}, { status: 200 }),
+      ),
     ],
   },
 };
