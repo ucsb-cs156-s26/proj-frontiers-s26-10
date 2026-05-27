@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for pages/Auth/ProtectedPage.jsx</title>
+    <title>Code coverage report for components/TabComponent/DownloadsTabComponent.jsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">pages/Auth</a> ProtectedPage.jsx</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/TabComponent</a> DownloadsTabComponent.jsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
@@ -80,39 +80,42 @@
 <a name='L15'></a><a href='#L15'>15</a>
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">31x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { hasRole } from "main/utils/currentUser";
-import AccessDeniedPage from "main/pages/Auth/AccessDeniedPage";
-import PromptSignInPage from "main/pages/Auth/PromptSignInPage";
-import LoadingPage from "main/pages/LoadingPage";
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Button } from "react-bootstrap";
 &nbsp;
-export default function ProtectedPage({ component, currentUser, enforceRole }) {
-  if (currentUser.initialData) {
-    return &lt;LoadingPage /&gt;;
-  }
-  if (hasRole(currentUser, enforceRole)) {
-    return &lt;&gt;{component}&lt;/&gt;;
-  } else if (!currentUser.loggedIn) {
-    return &lt;PromptSignInPage /&gt;;
-  } else {
-    return &lt;AccessDeniedPage /&gt;;
-  }
+export default function DownloadsTabComponent({ courseId, testIdPrefix }) {
+  const downloadStudentCsv = () =&gt; {
+    window.open(`/api/csv/rosterstudents?courseId=${courseId}`, "_blank");
+  };
+&nbsp;
+  return (
+    &lt;div data-testid={`${testIdPrefix}-DownloadsTabComponent`}&gt;
+      &lt;Button
+        onClick={downloadStudentCsv}
+        data-testid={`${testIdPrefix}-download-student-csv-button`}
+      &gt;
+        Download Student CSV
+      &lt;/Button&gt;
+    &lt;/div&gt;
+  );
 }
 &nbsp;</pre></td></tr></table></pre>
 
