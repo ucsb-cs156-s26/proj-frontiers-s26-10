@@ -2019,12 +2019,18 @@ public class CoursesControllerTests extends ControllerTestCase {
     when(courseRepository.findById(eq(1L))).thenReturn(Optional.of(course));
     when(courseRepository.save(any(Course.class))).thenAnswer(i -> i.getArgument(0));
 
-    mockMvc
-        .perform(post("/api/courses/hidePermissionWarning").param("courseId", "1").with(csrf()))
-        .andExpect(status().isOk());
+    MvcResult response =
+        mockMvc
+            .perform(post("/api/courses/hidePermissionWarning").param("courseId", "1").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
 
     assertTrue(course.getHideBasePermissionWarning());
     verify(courseRepository).save(course);
+
+    String responseString = response.getResponse().getContentAsString();
+    String expectedJson = mapper.writeValueAsString(course);
+    assertEquals(expectedJson, responseString);
   }
 
   @Test
