@@ -232,7 +232,7 @@ describe("CourseWarningBanner tests", () => {
       expect(screen.getByTestId("probe")).toHaveTextContent("read|false");
     });
     expect(
-      screen.queryByText(/default base permission for this organization/i),
+      screen.queryByText(/not the recommended value of None/i),
     ).not.toBeInTheDocument();
   });
 
@@ -252,7 +252,7 @@ describe("CourseWarningBanner tests", () => {
       </QueryClientProvider>,
     );
 
-    await screen.findByText(/default base permission for this organization/i);
+    await screen.findByText(/not the recommended value of None/i);
 
     const dismissButton = screen.getByTestId(
       "CourseWarningBanner-dismiss-button",
