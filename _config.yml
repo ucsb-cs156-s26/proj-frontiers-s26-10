@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s26/proj-frontiers-s26-10
 owner: ucsb-cs156-s26
 repo_name: proj-frontiers-s26-10
-pull_requests: [{"author":{"id":"MDQ6VXNlcjc5ODcxOTQ2","is_bot":false,"login":"EpicSRN021","name":""},"headRefName":"sn-issue10-base-permission-warning","number":34,"title":"Add dismiss button to suppress base permission warning","url":"https://github.com/ucsb-cs156-s26/proj-frontiers-s26-10/pull/34"}]
+pull_requests: [{"author":{"id":"U_kgDOC5aqZA","is_bot":false,"login":"omkulkarni77","name":""},"headRefName":"ok-34sn","number":36,"title":"Add dismiss button to suppress base permission warning","url":"https://github.com/ucsb-cs156-s26/proj-frontiers-s26-10/pull/36"},{"author":{"id":"MDQ6VXNlcjc5ODcxOTQ2","is_bot":false,"login":"EpicSRN021","name":""},"headRefName":"sn-issue10-base-permission-warning","number":34,"title":"Add dismiss button to suppress base permission warning","url":"https://github.com/ucsb-cs156-s26/proj-frontiers-s26-10/pull/34"}]
